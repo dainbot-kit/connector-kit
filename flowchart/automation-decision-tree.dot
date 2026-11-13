@@ -1,0 +1,362 @@
+// Automation decision tree — source for flowchart/automation-decision-tree.svg and .png
+// Re-render (Graphviz `dot` required):
+//   dot -Tsvg -o automation-decision-tree.svg automation-decision-tree.dot
+//   dot -Tpng -Gdpi=180 -o automation-decision-tree.png automation-decision-tree.dot
+
+digraph AutomationDecisionTree {
+  graph [
+    rankdir=TB
+    newrank=true
+    bgcolor="#FFFFFF"
+    fontname="Liberation Sans"
+    fontsize=12
+    fontcolor="#0F172A"
+    pad="0.40"
+    nodesep="0.40"
+    ranksep="0.58"
+    splines=true
+    outputorder=edgesfirst
+    margin="0.20"
+    compound=true
+  ];
+
+  node [
+    fontname="Liberation Sans"
+    fontsize=12
+    fontcolor="#0F172A"
+    color="#334155"
+  ];
+
+  edge [
+    fontname="Liberation Sans"
+    fontsize=11
+    fontcolor="#334155"
+    color="#475569"
+    arrowsize=0.75
+    penwidth=1.4
+    arrowhead=vee
+  ];
+
+  start [
+    shape=box
+    style="filled,rounded"
+    fillcolor="#0F172A"
+    fontcolor="#FFFFFF"
+    color="#0F172A"
+    penwidth=0
+    fontsize=22
+    margin="0.28,0.18"
+    label="I want to automate something"
+  ];
+
+  banner [
+    shape=box
+    style="filled,rounded"
+    fillcolor="#FEF3C7"
+    color="#B45309"
+    fontcolor="#78350F"
+    penwidth=2.2
+    fontsize=15
+    margin="0.28,0.16"
+    label="Automation = fixed path you draw.\nAgent = model chooses the path."
+  ];
+
+  q_fixed [
+    shape=diamond
+    style=filled
+    fillcolor="#FFFBEB"
+    color="#92400E"
+    penwidth=1.6
+    fontsize=13
+    width=2.55
+    height=1.6
+    fixedsize=true
+    label="Is the path\nfixed?"
+  ];
+
+  q_fill [
+    shape=diamond
+    style=filled
+    fillcolor="#EFF6FF"
+    color="#3D5A73"
+    penwidth=1.6
+    fontsize=13
+    width=2.85
+    height=1.75
+    fixedsize=true
+    group=L
+    label="Does a model need\nto fill steps?"
+  ];
+
+  q_invent [
+    shape=diamond
+    style=filled
+    fillcolor="#FFF7ED"
+    color="#C05612"
+    penwidth=1.6
+    fontsize=13
+    width=2.95
+    height=1.85
+    fixedsize=true
+    group=R
+    label="Must it invent steps\nyou never listed?"
+  ];
+
+  n1 [
+    shape=plain
+    group=L
+    label=<
+      <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="8" COLOR="#3D5A73" BGCOLOR="#F7FAFC" WIDTH="250">
+        <TR><TD BGCOLOR="#3D5A73" ALIGN="CENTER" CELLPADDING="10"><FONT FACE="Liberation Sans" COLOR="#FFFFFF" POINT-SIZE="14"><B>1. Deterministic automation</B></FONT></TD></TR>
+        <TR><TD ALIGN="LEFT" BGCOLOR="#D9E3EC" CELLPADDING="5"><FONT FACE="Liberation Sans" COLOR="#3D5A73" POINT-SIZE="11"><B>WHAT IT IS</B></FONT></TD></TR>
+        <TR><TD ALIGN="LEFT" BALIGN="LEFT"><FONT FACE="Liberation Sans" COLOR="#1E293B" POINT-SIZE="12">Fixed scripts, cron jobs, folder watchers,<BR ALIGN="LEFT"/>Shortcuts. No model. The path never changes.</FONT></TD></TR>
+        <TR><TD ALIGN="LEFT" BGCOLOR="#D9E3EC" CELLPADDING="5"><FONT FACE="Liberation Sans" COLOR="#3D5A73" POINT-SIZE="11"><B>WHAT IT CONTAINS</B></FONT></TD></TR>
+        <TR><TD ALIGN="LEFT" BALIGN="LEFT"><FONT FACE="Liberation Sans" COLOR="#1E293B" POINT-SIZE="12">Model: none<BR ALIGN="LEFT"/>Inference layer: none<BR ALIGN="LEFT"/>Tool layer: the script or Shortcut itself<BR ALIGN="LEFT"/>Loop: none (a scheduler may retrigger it)<BR ALIGN="LEFT"/>Stop condition: none (or the schedule ends)</FONT></TD></TR>
+        <TR><TD ALIGN="LEFT" BGCOLOR="#D9E3EC" CELLPADDING="5"><FONT FACE="Liberation Sans" COLOR="#3D5A73" POINT-SIZE="11"><B>WHEN TO USE</B></FONT></TD></TR>
+        <TR><TD ALIGN="LEFT" BALIGN="LEFT"><FONT FACE="Liberation Sans" COLOR="#1E293B" POINT-SIZE="12">The steps are fully known and should run<BR ALIGN="LEFT"/>the same way every time.</FONT></TD></TR>
+      </TABLE>
+    >
+  ];
+
+  n2 [
+    shape=plain
+    group=L
+    label=<
+      <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="8" COLOR="#1B6B43" BGCOLOR="#F3FBF6" WIDTH="250">
+        <TR><TD BGCOLOR="#1B6B43" ALIGN="CENTER" CELLPADDING="10"><FONT FACE="Liberation Sans" COLOR="#FFFFFF" POINT-SIZE="14"><B>2. LLM-assisted automation</B></FONT></TD></TR>
+        <TR><TD ALIGN="LEFT" BGCOLOR="#CDEAD8" CELLPADDING="5"><FONT FACE="Liberation Sans" COLOR="#145C38" POINT-SIZE="11"><B>WHAT IT IS</B></FONT></TD></TR>
+        <TR><TD ALIGN="LEFT" BALIGN="LEFT"><FONT FACE="Liberation Sans" COLOR="#1E293B" POINT-SIZE="12">The model fills in values or wording inside<BR ALIGN="LEFT"/>a path you already drew.</FONT></TD></TR>
+        <TR><TD ALIGN="LEFT" BGCOLOR="#CDEAD8" CELLPADDING="5"><FONT FACE="Liberation Sans" COLOR="#145C38" POINT-SIZE="11"><B>WHAT IT CONTAINS</B></FONT></TD></TR>
+        <TR><TD ALIGN="LEFT" BALIGN="LEFT"><FONT FACE="Liberation Sans" COLOR="#1E293B" POINT-SIZE="12">Model: yes (called at fixed points)<BR ALIGN="LEFT"/>Inference layer: one shot per fill-in step<BR ALIGN="LEFT"/>Tool layer: your fixed pipeline<BR ALIGN="LEFT"/>Loop: none (the path is the sequence)<BR ALIGN="LEFT"/>Stop condition: the end of your path</FONT></TD></TR>
+        <TR><TD ALIGN="LEFT" BGCOLOR="#CDEAD8" CELLPADDING="5"><FONT FACE="Liberation Sans" COLOR="#145C38" POINT-SIZE="11"><B>WHEN TO USE</B></FONT></TD></TR>
+        <TR><TD ALIGN="LEFT" BALIGN="LEFT"><FONT FACE="Liberation Sans" COLOR="#1E293B" POINT-SIZE="12">The sequence is fixed, but some steps need<BR ALIGN="LEFT"/>language, extraction, or classification.</FONT></TD></TR>
+      </TABLE>
+    >
+  ];
+
+  n3 [
+    shape=plain
+    group=R
+    label=<
+      <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="8" COLOR="#C05612" BGCOLOR="#FFFBF5" WIDTH="250">
+        <TR><TD BGCOLOR="#C05612" ALIGN="CENTER" CELLPADDING="10"><FONT FACE="Liberation Sans" COLOR="#FFFFFF" POINT-SIZE="14"><B>3. Agentic workflow</B></FONT></TD></TR>
+        <TR><TD ALIGN="LEFT" BGCOLOR="#F8D9B8" CELLPADDING="5"><FONT FACE="Liberation Sans" COLOR="#9A3F0A" POINT-SIZE="11"><B>WHAT IT IS</B></FONT></TD></TR>
+        <TR><TD ALIGN="LEFT" BALIGN="LEFT"><FONT FACE="Liberation Sans" COLOR="#1E293B" POINT-SIZE="12">The model chooses among tools and steps<BR ALIGN="LEFT"/>you defined, looping until the goal is met.</FONT></TD></TR>
+        <TR><TD ALIGN="LEFT" BGCOLOR="#F8D9B8" CELLPADDING="5"><FONT FACE="Liberation Sans" COLOR="#9A3F0A" POINT-SIZE="11"><B>WHAT IT CONTAINS</B></FONT></TD></TR>
+        <TR><TD ALIGN="LEFT" BALIGN="LEFT"><FONT FACE="Liberation Sans" COLOR="#1E293B" POINT-SIZE="12">Model: yes<BR ALIGN="LEFT"/>Inference layer: repeated calls in a loop<BR ALIGN="LEFT"/>Tool layer: the tools you registered<BR ALIGN="LEFT"/>Loop: yes, until the goal is met<BR ALIGN="LEFT"/>Stop condition: goal met, or a<BR ALIGN="LEFT"/>max-step / budget limit</FONT></TD></TR>
+        <TR><TD ALIGN="LEFT" BGCOLOR="#F8D9B8" CELLPADDING="5"><FONT FACE="Liberation Sans" COLOR="#9A3F0A" POINT-SIZE="11"><B>WHEN TO USE</B></FONT></TD></TR>
+        <TR><TD ALIGN="LEFT" BALIGN="LEFT"><FONT FACE="Liberation Sans" COLOR="#1E293B" POINT-SIZE="12">You know the allowed tools, but not the<BR ALIGN="LEFT"/>exact order of steps.</FONT></TD></TR>
+        <TR><TD ALIGN="CENTER" BGCOLOR="#FFF3E6" CELLPADDING="5"><FONT FACE="Liberation Sans" COLOR="#9A3F0A" POINT-SIZE="10"><I>Uses the context window and<BR/>tool-calling cycle (below).</I></FONT></TD></TR>
+      </TABLE>
+    >
+  ];
+
+  n4 [
+    shape=plain
+    group=R
+    label=<
+      <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="8" COLOR="#9A3412" BGCOLOR="#FFF8F1" WIDTH="250">
+        <TR><TD BGCOLOR="#9A3412" ALIGN="CENTER" CELLPADDING="10"><FONT FACE="Liberation Sans" COLOR="#FFFFFF" POINT-SIZE="14"><B>4. Autonomous agent</B></FONT></TD></TR>
+        <TR><TD ALIGN="LEFT" BGCOLOR="#F6C9B0" CELLPADDING="5"><FONT FACE="Liberation Sans" COLOR="#7C2D12" POINT-SIZE="11"><B>WHAT IT IS</B></FONT></TD></TR>
+        <TR><TD ALIGN="LEFT" BALIGN="LEFT"><FONT FACE="Liberation Sans" COLOR="#1E293B" POINT-SIZE="12">The model invents steps you never listed,<BR ALIGN="LEFT"/>guided by feedback and constraints.</FONT></TD></TR>
+        <TR><TD ALIGN="LEFT" BGCOLOR="#F6C9B0" CELLPADDING="5"><FONT FACE="Liberation Sans" COLOR="#7C2D12" POINT-SIZE="11"><B>WHAT IT CONTAINS</B></FONT></TD></TR>
+        <TR><TD ALIGN="LEFT" BALIGN="LEFT"><FONT FACE="Liberation Sans" COLOR="#1E293B" POINT-SIZE="12">Model: yes<BR ALIGN="LEFT"/>Inference layer: repeated calls in a loop<BR ALIGN="LEFT"/>Tool layer: tools plus (often)<BR ALIGN="LEFT"/>code execution<BR ALIGN="LEFT"/>Loop: yes, guided by feedback<BR ALIGN="LEFT"/>Stop condition: constraints, feedback,<BR ALIGN="LEFT"/>or a budget / step limit</FONT></TD></TR>
+        <TR><TD ALIGN="LEFT" BGCOLOR="#F6C9B0" CELLPADDING="5"><FONT FACE="Liberation Sans" COLOR="#7C2D12" POINT-SIZE="11"><B>WHEN TO USE</B></FONT></TD></TR>
+        <TR><TD ALIGN="LEFT" BALIGN="LEFT"><FONT FACE="Liberation Sans" COLOR="#1E293B" POINT-SIZE="12">You cannot list every step in advance, but<BR ALIGN="LEFT"/>you can bound the work with rules<BR ALIGN="LEFT"/>and a stop condition.</FONT></TD></TR>
+        <TR><TD ALIGN="CENTER" BGCOLOR="#FDE8D0" CELLPADDING="5"><FONT FACE="Liberation Sans" COLOR="#7C2D12" POINT-SIZE="10"><I>Uses the context window and<BR/>tool-calling cycle (below).</I></FONT></TD></TR>
+      </TABLE>
+    >
+  ];
+
+  special [
+    shape=box
+    style="filled,rounded"
+    fillcolor="#F5F3FF"
+    color="#6D28D9"
+    fontcolor="#4C1D95"
+    penwidth=1.8
+    fontsize=13
+    margin="0.22,0.11"
+    label="Also consider — these can combine with\nan agentic workflow (3) or an autonomous agent (4)"
+  ];
+
+  q_gui [
+    shape=diamond
+    style=filled
+    fillcolor="#F5F3FF"
+    color="#6D28D9"
+    penwidth=1.6
+    fontsize=12
+    width=2.5
+    height=1.55
+    fixedsize=true
+    label="Needs a GUI\nwith no API?"
+  ];
+
+  q_multi [
+    shape=diamond
+    style=filled
+    fillcolor="#F5F3FF"
+    color="#5B21B6"
+    penwidth=1.6
+    fontsize=12
+    width=2.5
+    height=1.55
+    fixedsize=true
+    label="Needs multiple\nviewpoints?"
+  ];
+
+  q_repeat [
+    shape=diamond
+    style=filled
+    fillcolor="#F5F3FF"
+    color="#7E22CE"
+    penwidth=1.6
+    fontsize=12
+    width=2.5
+    height=1.55
+    fixedsize=true
+    label="Will it repeat a\nsolved task?"
+  ];
+
+  n5 [
+    shape=plain
+    label=<
+      <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="7" COLOR="#6D28D9" BGCOLOR="#FCFAFF" WIDTH="230">
+        <TR><TD BGCOLOR="#6D28D9" ALIGN="CENTER" CELLPADDING="9"><FONT FACE="Liberation Sans" COLOR="#FFFFFF" POINT-SIZE="13"><B>5. Computer use</B></FONT></TD></TR>
+        <TR><TD ALIGN="LEFT" BGCOLOR="#E4D4FA" CELLPADDING="5"><FONT FACE="Liberation Sans" COLOR="#5B21B6" POINT-SIZE="10"><B>WHAT IT IS</B></FONT></TD></TR>
+        <TR><TD ALIGN="LEFT" BALIGN="LEFT"><FONT FACE="Liberation Sans" COLOR="#1E293B" POINT-SIZE="11">Screenshot → coordinates → click or type.<BR ALIGN="LEFT"/>A GUI layer such as PyAutoGUI<BR ALIGN="LEFT"/>carries out the action.</FONT></TD></TR>
+        <TR><TD ALIGN="LEFT" BGCOLOR="#E4D4FA" CELLPADDING="5"><FONT FACE="Liberation Sans" COLOR="#5B21B6" POINT-SIZE="10"><B>WHAT IT CONTAINS</B></FONT></TD></TR>
+        <TR><TD ALIGN="LEFT" BALIGN="LEFT"><FONT FACE="Liberation Sans" COLOR="#1E293B" POINT-SIZE="11">Model: yes (vision)<BR ALIGN="LEFT"/>Inference layer: one call per look-act step<BR ALIGN="LEFT"/>Tool layer: screenshot, click, type<BR ALIGN="LEFT"/>(e.g. PyAutoGUI)<BR ALIGN="LEFT"/>Loop: yes, look then act<BR ALIGN="LEFT"/>Stop condition: task done, or a max-action limit</FONT></TD></TR>
+        <TR><TD ALIGN="LEFT" BGCOLOR="#E4D4FA" CELLPADDING="5"><FONT FACE="Liberation Sans" COLOR="#5B21B6" POINT-SIZE="10"><B>WHEN TO USE</B></FONT></TD></TR>
+        <TR><TD ALIGN="LEFT" BALIGN="LEFT"><FONT FACE="Liberation Sans" COLOR="#1E293B" POINT-SIZE="11">The app has no usable API and must be<BR ALIGN="LEFT"/>driven through its screen.</FONT></TD></TR>
+        <TR><TD ALIGN="CENTER" BGCOLOR="#F3E8FF" CELLPADDING="5"><FONT FACE="Liberation Sans" COLOR="#5B21B6" POINT-SIZE="9"><I>Uses the context window and<BR/>tool-calling cycle (below).</I></FONT></TD></TR>
+      </TABLE>
+    >
+  ];
+
+  n6 [
+    shape=plain
+    label=<
+      <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="7" COLOR="#5B21B6" BGCOLOR="#FCFAFF" WIDTH="230">
+        <TR><TD BGCOLOR="#5B21B6" ALIGN="CENTER" CELLPADDING="9"><FONT FACE="Liberation Sans" COLOR="#FFFFFF" POINT-SIZE="13"><B>6. Multi-agent</B></FONT></TD></TR>
+        <TR><TD ALIGN="LEFT" BGCOLOR="#DDD6F8" CELLPADDING="5"><FONT FACE="Liberation Sans" COLOR="#4C1D95" POINT-SIZE="10"><B>WHAT IT IS</B></FONT></TD></TR>
+        <TR><TD ALIGN="LEFT" BALIGN="LEFT"><FONT FACE="Liberation Sans" COLOR="#1E293B" POINT-SIZE="11">One model generating multiple turns or roles<BR ALIGN="LEFT"/>that critique each other before acting.</FONT></TD></TR>
+        <TR><TD ALIGN="LEFT" BGCOLOR="#DDD6F8" CELLPADDING="5"><FONT FACE="Liberation Sans" COLOR="#4C1D95" POINT-SIZE="10"><B>WHAT IT CONTAINS</B></FONT></TD></TR>
+        <TR><TD ALIGN="LEFT" BALIGN="LEFT"><FONT FACE="Liberation Sans" COLOR="#1E293B" POINT-SIZE="11">Model: yes (multiple roles or turns)<BR ALIGN="LEFT"/>Inference layer: one call per role or turn<BR ALIGN="LEFT"/>Tool layer: optional, same tools as<BR ALIGN="LEFT"/>the parent loop<BR ALIGN="LEFT"/>Loop: yes, critique / debate rounds<BR ALIGN="LEFT"/>Stop condition: agreement, a reviewer verdict,<BR ALIGN="LEFT"/>or a max-round limit</FONT></TD></TR>
+        <TR><TD ALIGN="LEFT" BGCOLOR="#DDD6F8" CELLPADDING="5"><FONT FACE="Liberation Sans" COLOR="#4C1D95" POINT-SIZE="10"><B>WHEN TO USE</B></FONT></TD></TR>
+        <TR><TD ALIGN="LEFT" BALIGN="LEFT"><FONT FACE="Liberation Sans" COLOR="#1E293B" POINT-SIZE="11">You want a second viewpoint, a reviewer,<BR ALIGN="LEFT"/>or a debate before something is executed.</FONT></TD></TR>
+        <TR><TD ALIGN="CENTER" BGCOLOR="#EDE9FE" CELLPADDING="5"><FONT FACE="Liberation Sans" COLOR="#4C1D95" POINT-SIZE="9"><I>Uses the context window and<BR/>tool-calling cycle (below).</I></FONT></TD></TR>
+      </TABLE>
+    >
+  ];
+
+  n7 [
+    shape=plain
+    label=<
+      <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="7" COLOR="#7E22CE" BGCOLOR="#FDFAFF" WIDTH="230">
+        <TR><TD BGCOLOR="#7E22CE" ALIGN="CENTER" CELLPADDING="9"><FONT FACE="Liberation Sans" COLOR="#FFFFFF" POINT-SIZE="13"><B>7. Procedural memory /<BR/>skill library</B></FONT></TD></TR>
+        <TR><TD ALIGN="LEFT" BGCOLOR="#EFD0F7" CELLPADDING="5"><FONT FACE="Liberation Sans" COLOR="#6B21A8" POINT-SIZE="10"><B>WHAT IT IS</B></FONT></TD></TR>
+        <TR><TD ALIGN="LEFT" BALIGN="LEFT"><FONT FACE="Liberation Sans" COLOR="#1E293B" POINT-SIZE="11">A graph of solved sequences that get reused<BR ALIGN="LEFT"/>when the same kind of task appears again.</FONT></TD></TR>
+        <TR><TD ALIGN="LEFT" BGCOLOR="#EFD0F7" CELLPADDING="5"><FONT FACE="Liberation Sans" COLOR="#6B21A8" POINT-SIZE="10"><B>WHAT IT CONTAINS</B></FONT></TD></TR>
+        <TR><TD ALIGN="LEFT" BALIGN="LEFT"><FONT FACE="Liberation Sans" COLOR="#1E293B" POINT-SIZE="11">Model: yes (to match or write a skill)<BR ALIGN="LEFT"/>Inference layer: used to select or<BR ALIGN="LEFT"/>record a skill<BR ALIGN="LEFT"/>Tool layer: saved skills plus ordinary tools<BR ALIGN="LEFT"/>Loop: optional (learn once, reuse later)<BR ALIGN="LEFT"/>Stop condition: the skill finishes,<BR ALIGN="LEFT"/>or no skill matches</FONT></TD></TR>
+        <TR><TD ALIGN="LEFT" BGCOLOR="#EFD0F7" CELLPADDING="5"><FONT FACE="Liberation Sans" COLOR="#6B21A8" POINT-SIZE="10"><B>WHEN TO USE</B></FONT></TD></TR>
+        <TR><TD ALIGN="LEFT" BALIGN="LEFT"><FONT FACE="Liberation Sans" COLOR="#1E293B" POINT-SIZE="11">The same solved sequence will be needed again,<BR ALIGN="LEFT"/>so it should not be rediscovered from scratch.</FONT></TD></TR>
+      </TABLE>
+    >
+  ];
+
+  context [
+    shape=plain
+    label=<
+      <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="8" COLOR="#0F4C5C" BGCOLOR="#F3FBFA" WIDTH="310">
+        <TR><TD BGCOLOR="#0F4C5C" ALIGN="CENTER" CELLPADDING="10" WIDTH="310"><FONT FACE="Liberation Sans" COLOR="#FFFFFF" POINT-SIZE="14"><B>What's in the context window</B></FONT></TD></TR>
+        <TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="11"><FONT FACE="Liberation Sans" COLOR="#1E293B" POINT-SIZE="13">1. System prompt<BR ALIGN="LEFT"/>2. Tool schemas<BR ALIGN="LEFT"/>3. Conversation history<BR ALIGN="LEFT"/>4. Latest observation (the tool result)<BR ALIGN="LEFT"/>5. Stop condition</FONT></TD></TR>
+      </TABLE>
+    >
+  ];
+
+  cycle [
+    shape=plain
+    label=<
+      <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="8" COLOR="#1E3A5F" BGCOLOR="#F4F8FC" WIDTH="310">
+        <TR><TD BGCOLOR="#1E3A5F" ALIGN="CENTER" CELLPADDING="10" WIDTH="310"><FONT FACE="Liberation Sans" COLOR="#FFFFFF" POINT-SIZE="14"><B>Tool-calling cycle</B></FONT></TD></TR>
+        <TR><TD ALIGN="LEFT" BALIGN="LEFT" CELLPADDING="10"><FONT FACE="Liberation Sans" COLOR="#1E293B" POINT-SIZE="12">1. Model emits a structured tool call<BR ALIGN="LEFT"/>↓<BR ALIGN="LEFT"/>2. Harness validates and runs the tool<BR ALIGN="LEFT"/>↓<BR ALIGN="LEFT"/>3. Result is fed back into the context window<BR ALIGN="LEFT"/>↓<BR ALIGN="LEFT"/>4. Model decides: another call, or stop<BR ALIGN="LEFT"/>then loops back to step 1 until it stops</FONT></TD></TR>
+      </TABLE>
+    >
+  ];
+
+  legend [
+    shape=plain
+    label=<
+      <TABLE BORDER="1" CELLBORDER="0" CELLSPACING="0" CELLPADDING="8" COLOR="#94A3B8" BGCOLOR="#F8FAFC">
+        <TR>
+          <TD ALIGN="CENTER" BGCOLOR="#3D5A73" CELLPADDING="8"><FONT FACE="Liberation Sans" COLOR="#FFFFFF" POINT-SIZE="12">Grey-blue  ·  deterministic</FONT></TD>
+          <TD ALIGN="CENTER" BGCOLOR="#1B6B43" CELLPADDING="8"><FONT FACE="Liberation Sans" COLOR="#FFFFFF" POINT-SIZE="12">Green  ·  LLM-assisted</FONT></TD>
+          <TD ALIGN="CENTER" BGCOLOR="#C05612" CELLPADDING="8"><FONT FACE="Liberation Sans" COLOR="#FFFFFF" POINT-SIZE="12">Orange  ·  agentic / autonomous</FONT></TD>
+          <TD ALIGN="CENTER" BGCOLOR="#6D28D9" CELLPADDING="8"><FONT FACE="Liberation Sans" COLOR="#FFFFFF" POINT-SIZE="12">Purple  ·  computer use, multi-agent, memory</FONT></TD>
+        </TR>
+      </TABLE>
+    >
+  ];
+
+  start -> banner [penwidth=1.6, color="#0F172A"];
+  banner -> q_fixed [penwidth=1.6, color="#0F172A"];
+
+  q_fixed -> q_fill   [label="YES — you can draw every step",   color="#3D5A73", fontcolor="#3D5A73", penwidth=1.7];
+  q_fixed -> q_invent [label="NO — the model chooses the path", color="#C05612", fontcolor="#9A3F0A", penwidth=1.7];
+
+  q_fill:s -> n1:n [label="NO",              color="#3D5A73", fontcolor="#3D5A73", penwidth=1.7];
+  q_fill:e -> n2:e [label="YES — fill steps", color="#1B6B43", fontcolor="#145C38", penwidth=1.7];
+
+  q_invent:s -> n3:n [label="NO — it picks among tools\nand steps you defined", color="#C05612", fontcolor="#9A3F0A", penwidth=1.7];
+  q_invent:w -> n4:w [label="YES — invent steps", color="#9A3412", fontcolor="#7C2D12", penwidth=1.7];
+
+  n4:s -> special:ne [style=dashed, color="#7C3AED", penwidth=1.3, arrowsize=0.7];
+  special -> q_gui    [color="#6D28D9"];
+  special -> q_multi  [color="#5B21B6"];
+  special -> q_repeat [color="#7E22CE"];
+  q_gui    -> n5 [label="YES", color="#6D28D9", fontcolor="#5B21B6", penwidth=1.6];
+  q_multi  -> n6 [label="YES", color="#5B21B6", fontcolor="#4C1D95", penwidth=1.6];
+  q_repeat -> n7 [label="YES", color="#7E22CE", fontcolor="#6B21A8", penwidth=1.6];
+
+  { rank=same; start }
+  { rank=same; banner }
+  { rank=same; q_fixed }
+  { rank=same; q_fill; q_invent }
+  { rank=same; special }
+  { rank=same; q_gui; q_multi; q_repeat }
+  { rank=same; n5; n6; n7 }
+  { rank=same; legend }
+
+  n1 -> n2 [style=invis, weight=12];
+  n3 -> n4 [style=invis, weight=12];
+  q_gui -> q_multi -> q_repeat [style=invis, weight=8];
+  n5 -> n6 -> n7 [style=invis, weight=8];
+  n2 -> special [style=invis, weight=2];
+
+  subgraph cluster_ref {
+    graph [
+      style="dashed,rounded"
+      color="#1E3A5F"
+      penwidth=1.6
+      bgcolor="#F8FBFD"
+      label="Used by 3. Agentic workflow, 4. Autonomous agent,\n5. Computer use, and 6. Multi-agent"
+      fontname="Liberation Sans"
+      fontsize=12
+      fontcolor="#1E3A5F"
+      labelloc=t
+      margin=16
+    ];
+    context;
+    cycle;
+    { rank=same; context; cycle }
+    context -> cycle [style=invis, weight=1];
+  }
+
+  n5 -> context [style=dashed, color="#0F4C5C", penwidth=1.2, lhead=cluster_ref, arrowsize=0.65];
+  n6 -> cycle   [style=dashed, color="#1E3A5F", penwidth=1.2, lhead=cluster_ref, arrowsize=0.65];
+
+  context -> legend [style=invis, weight=6];
+  cycle -> legend   [style=invis, weight=6];
+}
